@@ -4,7 +4,6 @@ import './globals.css'
 import Header from "@/app/components/Header";
 import { Providers } from './providers'
 
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'TickGet',
@@ -18,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body>
           <Providers>
               <Header />
               {children}
