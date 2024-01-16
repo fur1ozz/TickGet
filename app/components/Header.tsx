@@ -9,7 +9,8 @@ const Header = () => {
     const pathname = usePathname()
 
     // @ts-ignores
-    const username = localStorage.getItem("TickGetUsername");
+    // const username = localStorage.getItem("TickGetUsername");
+    const username = "";
 
     const handleMobileMenuToggle = () => {
         setMobileMenuOpen(!mobileMenuOpen);
@@ -18,7 +19,7 @@ const Header = () => {
     return(
         <>
             <header className="absolute z-10 w-full">
-                <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+                <nav className="px-4 lg:px-6 py-2.5">
                     <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                         <a className="flex items-center">
                             <span className="text-black self-center text-xl font-semibold whitespace-nowrap dark:text-white">TickGet</span>
@@ -28,14 +29,14 @@ const Header = () => {
                             {username ? (
                                 <Link
                                     href="/profile"
-                                    class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
+                                    className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
                                 >
                                     <span className="font-medium text-gray-600 dark:text-gray-300">{username}</span>
                                 </Link>
                             ) : (
                                 <Link
                                     href="/login"
-                                    className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+                                    className="text-white bg-secondary-100 hover:bg-secondary-200 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 transition duration-150 ease-in"
                                 >
                                     Login
                                 </Link>
@@ -68,8 +69,8 @@ const Header = () => {
                                 </li>
                                 <li>
                                     <Link
-                                        href="#"
-                                        className={`block py-2 pr-4 pl-3 lg:bg-transparent lg:p-0 border-b border-gray-100 dark:border-gray-700 lg:border-0 ${pathname === '#' ? 'bg-primary-700 lg:text-primary-700 text-white dark:text-white rounded' : 'text-gray-700 dark:text-gray-400'}`}
+                                        href="/tickets"
+                                        className={`block py-2 pr-4 pl-3 lg:bg-transparent lg:p-0 border-b border-gray-100 dark:border-gray-700 lg:border-0 ${pathname === '/tickets' ? 'bg-primary-700 lg:text-primary-700 text-white dark:text-white rounded' : 'text-gray-700 dark:text-gray-400'}`}
                                     >
                                         Tickets
                                     </Link>
