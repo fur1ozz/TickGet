@@ -7,7 +7,7 @@ import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'TickGet',
-  description: 'Get you tickets in the best ticket selling site',
+  description: 'Get you events in the best ticket selling site',
 }
 
 export default function RootLayout({
