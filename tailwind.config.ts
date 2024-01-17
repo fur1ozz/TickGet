@@ -21,7 +21,7 @@ const config: Config = {
         event: "#f1ab1c",
         darken: "rgba(0,0,0,0.62)",
         shadowWhite: "rgba(255,255,255,0.2)",
-      }
+      },
     },
   },
   plugins: [],

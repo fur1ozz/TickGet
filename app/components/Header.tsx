@@ -18,7 +18,7 @@ const Header = () => {
 
     return(
         <>
-            <header className="absolute z-10 w-full">
+            <header className="fixed z-10 w-full">
                 <nav className="px-4 lg:px-6 py-2.5">
                     <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                         <a className="flex items-center">
