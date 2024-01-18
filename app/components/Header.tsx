@@ -10,7 +10,7 @@ const Header = () => {
 
     // @ts-ignores
     // const username = localStorage.getItem("TickGetUsername");
-    const username = "sss";
+    const username = "";
     const admin = true;
 
     const handleMobileMenuToggle = () => {

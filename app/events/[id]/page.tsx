@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import {ToastGreen, ToastRed, ToastYellow} from "@/app/components/Toasts";
 
 interface EventIdProps {
     params: {
@@ -31,6 +32,11 @@ export default function EventId({ params }: EventIdProps) {
     const [selectedTicketType, setSelectedTicketType] = useState<string | null>(null);
     const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
     const [ticketQuantity, setTicketQuantity] = useState<number>(1);
+    const [formChanges, setFormChanges] = useState(0);
+    const [errorToast, setErrorToast] = useState<string | null>(null);
+    const [successToast, setSuccessToast] = useState<string | null>(null);
+
+    const userid = 1;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,7 +51,7 @@ export default function EventId({ params }: EventIdProps) {
         };
 
         fetchData();
-    }, [params.id]);
+    }, [params.id, formChanges]);
 
     const openGoogleMaps = () => {
         if (eventData && eventData.location) {
@@ -60,9 +66,33 @@ export default function EventId({ params }: EventIdProps) {
         setSelectedTicketType(type);
         setSelectedTicketId(id);
     };
-    const handleSubmit = () => {
-        console.log("tests");
-        console.log("ticket - " + selectedTicketId + "and quantity - " + ticketQuantity);
+
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('http://localhost/api/purchase-history/create', {
+                user_id: userid,
+                event_id: params.id,
+                ticket_id: selectedTicketId,
+                quantity: ticketQuantity,
+            });
+            console.log('LOG', response.data);
+            if (response.data.dataAdd === "ok") {
+                setTicketQuantity(1);
+                setSelectedTicketId(null);
+                setSelectedTicketType(null);
+                setFormChanges((prevChanges) => prevChanges + 1);
+                setSuccessToast(response.data.message);
+                setTimeout(() => setSuccessToast(null), 4000);
+            }else{
+                setErrorToast(response.data.error);
+                setTimeout(() => setErrorToast(null), 4000);
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            setErrorToast("An error occurred while processing your request.");
+            setTimeout(() => setErrorToast(null), 4000);
+        }
     }
 
     return (
@@ -71,12 +101,14 @@ export default function EventId({ params }: EventIdProps) {
             style={{ backgroundImage: 'url("/images/street2.jpg")' }}
         >
             <div className="flex flex-col items-center justify-center px-4 md:px-6 lg:px-8 py-10 mx-auto min-h-screen bg-darken">
+                {errorToast && <ToastYellow text={errorToast} />}
+                {successToast && <ToastGreen text={successToast} />}
                 {loading ? (
                     <p className="text-3xl">Loading...</p>
                 ) : eventData === null ? ( // Updated the condition
                     <p>No data available</p>
                 ) : (
-                    <div className="relative p-4 bg-ticketBg-100 rounded shadow dark:bg-ticketBg-200 sm:p-5">
+                    <div className="relative p-4 bg-ticketBg-100 rounded shadow dark:bg-ticketBg-200 sm:p-5 w-full lg:w-[900px]">
                         <div className="flex justify-between mb-4 rounded-t sm:mb-5">
                             <div className="text-lg text-gray-900 md:text-xl dark:text-white">
                                 <h3 className="font-semibold ">{eventData.name}</h3>
