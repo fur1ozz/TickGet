@@ -10,10 +10,13 @@ interface Event {
     description: string;
     date: string;
     time: string;
+    standart_ticket_price: number;
+    vip_ticket_price: number;
 }
 
 export default function Event() {
     const [eventData, setEventData] = useState<Event[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -22,6 +25,8 @@ export default function Event() {
                 setEventData(response.data.events);
             } catch (error) {
                 console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -30,7 +35,7 @@ export default function Event() {
     console.log(eventData);
 
     return (
-        <section
+        <main
             className="bg-gray-50 dark:bg-darkPrimary bg-cover bg-center bg-fixed"
             style={{ backgroundImage: 'url("/images/street2.jpg")' }}
         >
@@ -40,7 +45,9 @@ export default function Event() {
                     <h1 className="uppercase font-black text-4xl md:text-7xl lg:text-7xl text-event">EVENTS</h1>
                 </div>
                 <div className="flex flex-wrap justify-center">
-                    {eventData.length === 0 ? (
+                    {loading ? (
+                        <p className="text-3xl">Loading...</p>
+                    ) : eventData.length === 0 ? (
                         <p>No data available</p>
                     ) : (
                         eventData.map((events) => {
@@ -71,7 +78,7 @@ export default function Event() {
                                                 </svg>
                                                 {events.location}
                                             </button>
-                                            <div className="font-semibold">€ 29.00 - 64.00</div>
+                                            <div className="font-semibold">€ {events.standart_ticket_price} - {events.vip_ticket_price}</div>
                                         </div>
                                         <div className="border-black p-4">
                                             <div>
@@ -91,6 +98,6 @@ export default function Event() {
                 </div>
             </div>
             {/*{showPopup && <EventPopup onClose={handleClosePopup} />}*/}
-        </section>
+        </main>
     );
 }
