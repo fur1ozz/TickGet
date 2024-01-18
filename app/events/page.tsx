@@ -14,16 +14,21 @@ interface Event {
     vip_ticket_price: number;
     created_at: string;
 }
-
 export default function Event() {
     const [eventData, setEventData] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
+    const [sortOption, setSortOption] = useState<string>('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://localhost/api/events');
-                setEventData(response.data.events);
+                const currentDate = new Date();
+                const futureEvents = response.data.events.filter((event: Event) => {
+                    const eventDate = new Date(event.date);
+                    return eventDate.getTime() >= currentDate.getTime();
+                });
+                setEventData(futureEvents);
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -40,6 +45,20 @@ export default function Event() {
         const differenceInDays = (currentDate.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24);
         return differenceInDays <= 5;
     };
+    const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedSortOption = e.target.value;
+        setSortOption(selectedSortOption);
+
+        if (selectedSortOption === 'soonest') {
+            const sortedEvents = [...eventData].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            setEventData(sortedEvents);
+        } else if (selectedSortOption === 'latest') {
+            const sortedEvents = [...eventData].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            setEventData(sortedEvents);
+        } else {
+            setEventData(eventData);
+        }
+    };
 
     return (
         <main
@@ -51,6 +70,25 @@ export default function Event() {
                     <div className="text-xl md:text-2xl lg:text-3xl tracking-[1rem] pl-[1rem]">upcoming</div>
                     <h1 className="uppercase font-black text-4xl md:text-7xl lg:text-7xl text-event">EVENTS</h1>
                 </div>
+                {loading ? (
+                    <div>
+
+                    </div>
+                ) : (
+                    <div className="flex flex-col">
+                        <label htmlFor="countries" className="block mb-1 text-base font-semibold text-white">By happening date</label>
+                        <select
+                            id="sort"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg outline-0 block w-52 p-2.5 dark:bg-ticketBg-200 dark:border-ticketBg-300 dark:placeholder-gray-400 dark:text-white"
+                            value={sortOption}
+                            onChange={handleSortChange}
+                        >
+                            <option selected value=""></option>
+                            <option value="soonest">Soonest</option>
+                            <option value="latest">Latest</option>
+                        </select>
+                    </div>
+                )}
                 <div className="flex flex-wrap justify-center">
                     {loading ? (
                         <p className="text-3xl">Loading...</p>
