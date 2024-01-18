@@ -14,6 +14,9 @@ interface Event {
     description: string;
     date: string;
     time: string;
+    standart_ticket_id: number;
+    premium_ticket_id: number;
+    vip_ticket_id: number;
     standart_ticket_price: number;
     premium_ticket_price: number;
     vip_ticket_price: number;
@@ -23,9 +26,11 @@ interface Event {
 }
 
 export default function EventId({ params }: EventIdProps) {
-    const [eventData, setEventData] = useState<Event | null>(null); // Updated the type and initialized to null
+    const [eventData, setEventData] = useState<Event | null>(null);
     const [loading, setLoading] = useState(true);
     const [selectedTicketType, setSelectedTicketType] = useState<string | null>(null);
+    const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+    const [ticketQuantity, setTicketQuantity] = useState<number>(1);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -51,11 +56,13 @@ export default function EventId({ params }: EventIdProps) {
     const eventDate = eventData ? new Date(eventData.date) : null;
     const dayOfWeekAbbreviated = eventDate ? new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(eventDate) : null;
 
-    const handleTicketTypeSelect = (type: string) => {
+    const handleTicketTypeSelect = (type: string, id: number) => {
         setSelectedTicketType(type);
+        setSelectedTicketId(id);
     };
     const handleSubmit = () => {
         console.log("tests");
+        console.log("ticket - " + selectedTicketId + "and quantity - " + ticketQuantity);
     }
 
     return (
@@ -63,14 +70,13 @@ export default function EventId({ params }: EventIdProps) {
             className="bg-gray-50 dark:bg-darkPrimary bg-cover bg-center bg-fixed"
             style={{ backgroundImage: 'url("/images/street2.jpg")' }}
         >
-            <div className="flex flex-col items-center px-4 md:px-6 lg:px-8 py-10 mx-auto min-h-screen bg-darken">
-                <h1 className="uppercase font-black text-4xl md:text-7xl lg:text-7xl text-event">ticket {params.id}</h1>
+            <div className="flex flex-col items-center justify-center px-4 md:px-6 lg:px-8 py-10 mx-auto min-h-screen bg-darken">
                 {loading ? (
                     <p className="text-3xl">Loading...</p>
                 ) : eventData === null ? ( // Updated the condition
                     <p>No data available</p>
                 ) : (
-                    <div className="relative p-4 bg-white rounded-lg shadow dark:bg-darkPrimary sm:p-5">
+                    <div className="relative p-4 bg-ticketBg-100 rounded shadow dark:bg-ticketBg-200 sm:p-5">
                         <div className="flex justify-between mb-4 rounded-t sm:mb-5">
                             <div className="text-lg text-gray-900 md:text-xl dark:text-white">
                                 <h3 className="font-semibold ">{eventData.name}</h3>
@@ -91,38 +97,53 @@ export default function EventId({ params }: EventIdProps) {
                                 {`${dayOfWeekAbbreviated}, ${eventData.date} ${eventData.time.split(':').slice(0, 2).join(':')}`}
                             </div>
                         </div>
-                        <div className="text-lg text-gray-900 md:text-xl dark:text-white flex w-full justify-center">
-                            <h3 className="font-semibold ">Available tickets</h3>
+                        <div className="text-lg text-gray-900 dark:text-white flex w-full justify-center">
+                            <h3 className="font-semibold text-2xl">Available tickets</h3>
                         </div>
                         <div className="flex w-full justify-around my-2 text-black dark:text-white">
                             <div
-                                onClick={() => handleTicketTypeSelect('Standart')}
+                                onClick={() => handleTicketTypeSelect('Standart', eventData?.standart_ticket_id)}
                                 className={`cursor-pointer ${selectedTicketType === 'Standart' ? 'border-b-4 border-primary-500' : ''}`}
                             >
-                                <p className="font-bold">Standart</p>
-                                <p className="font-bold">${eventData.standart_ticket_price}</p>
-                                <p className="font-bold">Quantity</p>
-                                <p className="font-bold">{eventData.standart_ticket_quantity}</p>
+                                <p className="font-bold text-ticket-100 text-lg">Standart</p>
+                                <p className="font-bold">€{eventData?.standart_ticket_price}</p>
+                                <p className="font-bold text-ticket-400">Quantity</p>
+                                <p className="font-bold">{eventData?.standart_ticket_quantity}</p>
                             </div>
                             <div
-                                onClick={() => handleTicketTypeSelect('Premium')}
+                                onClick={() => handleTicketTypeSelect('Premium', eventData?.premium_ticket_id)}
                                 className={`cursor-pointer ${selectedTicketType === 'Premium' ? 'border-b-4 border-primary-500' : ''}`}
                             >
-                                <p className="font-bold">Premium</p>
-                                <p className="font-bold">${eventData.premium_ticket_price}</p>
-                                <p className="font-bold">Quantity</p>
-                                <p className="font-bold">{eventData.standart_ticket_quantity}</p>
+                                <p className="font-bold text-ticket-200 text-lg">Premium</p>
+                                <p className="font-bold">€{eventData?.premium_ticket_price}</p>
+                                <p className="font-bold text-ticket-400">Quantity</p>
+                                <p className="font-bold">{eventData?.premium_ticket_quantity}</p>
                             </div>
                             <div
-                                onClick={() => handleTicketTypeSelect('VIP')}
+                                onClick={() => handleTicketTypeSelect('VIP', eventData?.vip_ticket_id)}
                                 className={`cursor-pointer ${selectedTicketType === 'VIP' ? 'border-b-4 border-primary-500' : ''}`}
                             >
-                                <p className="font-bold">VIP</p>
-                                <p className="font-bold">${eventData.vip_ticket_price}</p>
-                                <p className="font-bold">Quantity</p>
-                                <p className="font-bold">{eventData.standart_ticket_quantity}</p>
+                                <p className="font-bold text-ticket-300 text-lg">VIP</p>
+                                <p className="font-bold">€{eventData?.vip_ticket_price}</p>
+                                <p className="font-bold text-ticket-400">Quantity</p>
+                                <p className="font-bold">{eventData?.vip_ticket_quantity}</p>
                             </div>
                         </div>
+                        {selectedTicketType && (
+                            <div className="flex w-full justify-around my-4 text-black dark:text-white">
+                                <input
+                                    type="number"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-28 p-2.5 dark:bg-ticketBg-300 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-0"
+                                    placeholder="1"
+                                    value={ticketQuantity}
+                                    onChange={(e) => {
+                                        const inputValue = e.target.value;
+                                        setTicketQuantity(inputValue === '' ? 1 : Math.max(1, Number(inputValue)));
+                                    }}
+                                    required
+                                />
+                            </div>
+                        )}
                         <div className="flex justify-center items-center mt-3">
                             <button
                                 onClick={handleSubmit}

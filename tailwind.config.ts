@@ -21,6 +21,8 @@ const config: Config = {
         event: "#f1ab1c",
         darken: "rgba(0,0,0,0.62)",
         shadowWhite: "rgba(255,255,255,0.2)",
+        ticket: {"100": "#6ea16d", "200": "#c9b1cb", "300": "#f54545", "400": "#f5c345",},
+        ticketBg: {"100": "#ECF8FE", "200": "#010d13", "300": "#03171f"},
       },
     },
   },

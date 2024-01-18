@@ -12,6 +12,7 @@ interface Event {
     time: string;
     standart_ticket_price: number;
     vip_ticket_price: number;
+    created_at: string;
 }
 
 export default function Event() {
@@ -32,7 +33,13 @@ export default function Event() {
 
         fetchData();
     }, []);
-    console.log(eventData);
+    // console.log(eventData);
+    const isNewEvent = (createdDate: string) => {
+        const currentDate = new Date();
+        const eventDate = new Date(createdDate);
+        const differenceInDays = (currentDate.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24);
+        return differenceInDays <= 5;
+    };
 
     return (
         <main
@@ -60,7 +67,10 @@ export default function Event() {
                                 window.open(`https://www.google.com/maps?q=${address}`, '_blank');
                             };
                             return (
-                                <div key={events.id} className="rounded m-5">
+                                <div key={events.id} className="rounded m-5 relative">
+                                    {isNewEvent(events.created_at) && (
+                                        <span className="absolute top-0 right-0 bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">NEW</span>
+                                    )}
                                     <div
                                         className="group w-[320px] h-[230px] shadow-2xl overflow-hidden bg-cover bg-center"
                                         style={{ backgroundImage: 'url("/images/concert1.jpg")' }}
