@@ -11,6 +11,7 @@ const Header = () => {
     // @ts-ignores
     // const username = localStorage.getItem("TickGetUsername");
     const username = "sss";
+    const admin = true;
 
     const handleMobileMenuToggle = () => {
         setMobileMenuOpen(!mobileMenuOpen);
@@ -61,20 +62,30 @@ const Header = () => {
                             <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                                 <li>
                                     <Link
-                                        href="/"
-                                        className={`block py-2 pr-4 pl-3 lg:bg-transparent lg:p-0 border-b border-gray-100 dark:border-gray-700 lg:border-0 ${pathname === '/' ? 'bg-primary-700 lg:text-primary-700 text-white rounded' : 'text-secondary-300'}`}
-                                    >
-                                        Home
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
                                         href="/events"
                                         className={`block py-2 pr-4 pl-3 lg:bg-transparent lg:p-0 border-b border-gray-100 dark:border-gray-700 lg:border-0 ${pathname === '/events' ? 'bg-primary-700 lg:text-primary-700 text-white rounded' : 'text-secondary-300'}`}
                                     >
                                         Tickets
                                     </Link>
                                 </li>
+                                <li>
+                                    <Link
+                                        href="/profile/history"
+                                        className={`block py-2 pr-4 pl-3 lg:bg-transparent lg:p-0 border-b border-gray-100 dark:border-gray-700 lg:border-0 ${pathname === '/profile/history' ? 'bg-primary-700 lg:text-primary-700 text-white rounded' : 'text-secondary-300'}`}
+                                    >
+                                        Purchase History
+                                    </Link>
+                                </li>
+                                {admin && (
+                                    <li>
+                                        <Link
+                                            href="/profile/new-event"
+                                            className={`block py-2 pr-4 pl-3 lg:bg-transparent lg:p-0 border-b border-gray-100 dark:border-gray-700 lg:border-0 ${pathname === '/profile/new-event' ? 'bg-primary-700 lg:text-primary-700 text-white rounded' : 'text-secondary-300'}`}
+                                        >
+                                            New Event
+                                        </Link>
+                                    </li>
+                                )}
                             </ul>
                         </div>
                     </div>

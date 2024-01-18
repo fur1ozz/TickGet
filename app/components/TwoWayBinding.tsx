@@ -5,3 +5,13 @@ export const handleInputChange = (formData: any, setFormData: (arg0: any) => voi
         [name]: value,
     });
 };
+export const handleInputChangeNumber = (formData: any, setFormData: (arg0: any) => void) => (e: { target: { name: any; value: any; }; }) => {
+    const { name, value } = e.target;
+
+    const sanitizedValue = Math.max(Number(value), 1);
+
+    setFormData({
+        ...formData,
+        [name]: sanitizedValue.toString(),
+    });
+};

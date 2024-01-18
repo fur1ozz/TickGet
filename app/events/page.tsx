@@ -69,7 +69,7 @@ export default function Event() {
                             return (
                                 <div key={events.id} className="rounded m-5 relative">
                                     {isNewEvent(events.created_at) && (
-                                        <span className="absolute top-0 right-0 bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">NEW</span>
+                                        <span className="absolute top-0 right-0 bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">NEW</span>
                                     )}
                                     <div
                                         className="group w-[320px] h-[230px] shadow-2xl overflow-hidden bg-cover bg-center"
