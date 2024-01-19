@@ -83,7 +83,7 @@ export default function Event() {
                             value={sortOption}
                             onChange={handleSortChange}
                         >
-                            <option selected value=""></option>
+                            <option value=""></option>
                             <option value="soonest">Soonest</option>
                             <option value="latest">Latest</option>
                         </select>

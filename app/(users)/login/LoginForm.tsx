@@ -25,11 +25,12 @@ export default function LoginForm() {
             });
             console.log('LOG', response.data);
             if (response.data.response === "logged") {
+                localStorage.setItem("token", response.data.token);
                 setFormData({
                     email: '',
                     password: '',
                 });
-                router.push("/");
+                router.push("/events");
             }
         } catch (error) {
             console.error('Error submitting form:', error);

@@ -36,7 +36,7 @@ export default function EventId({ params }: EventIdProps) {
     const [errorToast, setErrorToast] = useState<string | null>(null);
     const [successToast, setSuccessToast] = useState<string | null>(null);
 
-    const userid = 1;
+    const userid = localStorage.getItem("userId") || "";
 
     useEffect(() => {
         const fetchData = async () => {
@@ -180,8 +180,8 @@ export default function EventId({ params }: EventIdProps) {
                             <button
                                 onClick={handleSubmit}
                                 type="button"
-                                className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                                disabled={!selectedTicketType} // Disable the button if no ticket type is selected
+                                className="disabled:hover:bg-gray-700 dark:disabled:hover:bg-gray-700 disabled:cursor-not-allowed text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                disabled={!selectedTicketType || !userid}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                     <path fillRule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 0 0 4.25 22.5h15.5a1.875 1.875 0 0 0 1.865-2.071l-1.263-12a1.875 1.875 0 0 0-1.865-1.679H16.5V6a4.5 4.5 0 1 0-9 0ZM12 3a3 3 0 0 0-3 3v.75h6V6a3 3 0 0 0-3-3Zm-3 8.25a3 3 0 1 0 6 0v-.75a.75.75 0 0 1 1.5 0v.75a4.5 4.5 0 1 1-9 0v-.75a.75.75 0 0 1 1.5 0v.75Z" clipRule="evenodd" />

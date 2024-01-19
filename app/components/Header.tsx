@@ -1,17 +1,42 @@
 "use client"
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from "next/link";
 import {ThemeSwitcher} from "@/app/components/ThemeSwitcher";
 import { usePathname } from 'next/navigation'
+import axios from "axios";
 
 const Header = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const pathname = usePathname()
+    const [username, setUsername] = useState("");
+    const [admin, setAdmin] = useState(false);
+    const [userId, setUserId] = useState("");
 
-    // @ts-ignores
-    // const username = localStorage.getItem("TickGetUsername");
-    const username = "";
-    const admin = true;
+    const userToken = localStorage.getItem("token") || "";
+
+    const fetchDataWithToken = async () => {
+        try {
+            const response = await axios.post('http://localhost/api/auth', {
+                token: userToken,
+            });
+            console.log(response.data);
+            setUsername(response.data.user.username);
+            if (response.data.user.access === "admin") {
+                setAdmin(true);
+            }
+            localStorage.setItem("userId", response.data.user.id);
+            console.log("test header");
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        if(userToken){
+            localStorage.setItem("userId", userId);
+            fetchDataWithToken();
+        }
+    }, []);
 
     const handleMobileMenuToggle = () => {
         setMobileMenuOpen(!mobileMenuOpen);
