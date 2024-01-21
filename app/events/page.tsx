@@ -18,7 +18,7 @@ interface Event {
 }
 export default function Event() {
     const [eventData, setEventData] = useState<Event[]>([]);
-    const [filteredData, setFilteredData] = useState<Event[]>([]); // Add filteredData state
+    const [filteredData, setFilteredData] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
     const [sortOption, setSortOption] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState<string>('');
