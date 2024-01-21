@@ -5,6 +5,7 @@ import axios from 'axios';
 import Link from "next/link";
 import { useRouter } from 'next/navigation'
 import {handleInputChange} from "@/app/components/TwoWayBinding";
+import {ToastGreen, ToastYellow} from "@/app/components/Toasts";
 
 export default function LoginForm() {
     const router = useRouter();
@@ -12,6 +13,9 @@ export default function LoginForm() {
         email: '',
         password: '',
     });
+    const [errorToast, setErrorToast] = useState<string | null>(null);
+    const [successToast, setSuccessToast] = useState<string | null>(null);
+
 
     const handleChange = handleInputChange(formData, setFormData);
 
@@ -31,9 +35,14 @@ export default function LoginForm() {
                     password: '',
                 });
                 router.push("/events");
+            }else{
+                setErrorToast(response.data.message);
+                setTimeout(() => setErrorToast(null), 4000);
             }
         } catch (error) {
             console.error('Error submitting form:', error);
+            setErrorToast("An error occurred while processing your request.");
+            setTimeout(() => setErrorToast(null), 4000);
         }
 
     };
@@ -46,6 +55,8 @@ export default function LoginForm() {
             style={{ backgroundImage: 'url("/images/landscape5.jpg")' }}
         >
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
+                {errorToast && <ToastYellow text={errorToast} />}
+                {successToast && <ToastGreen text={successToast} />}
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-ticketBg-300 dark:border-gray-700">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">

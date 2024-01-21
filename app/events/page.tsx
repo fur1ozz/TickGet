@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from "next/link";
+import {handleInputChange} from "@/app/components/TwoWayBinding";
 
 interface Event {
     id: number;
@@ -13,11 +14,15 @@ interface Event {
     standart_ticket_price: number;
     vip_ticket_price: number;
     created_at: string;
+    category: string;
 }
 export default function Event() {
     const [eventData, setEventData] = useState<Event[]>([]);
+    const [filteredData, setFilteredData] = useState<Event[]>([]); // Add filteredData state
     const [loading, setLoading] = useState(true);
     const [sortOption, setSortOption] = useState<string>('');
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [searchCatQuery, setSearchCatQuery] = useState<string>('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,6 +34,7 @@ export default function Event() {
                     return eventDate.getTime() >= currentDate.getTime();
                 });
                 setEventData(futureEvents);
+                setFilteredData(futureEvents);
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -59,6 +65,31 @@ export default function Event() {
             setEventData(eventData);
         }
     };
+    const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchCatQuery("");
+        const query = e.target.value;
+        setSearchQuery(query);
+
+        // Filter events based on the search query
+        const filteredEvents = eventData.filter((event) =>
+            event.name.toLowerCase().includes(query.toLowerCase())
+        );
+
+        setFilteredData(filteredEvents);
+    };
+    const handleCatSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery("");
+        const query = e.target.value;
+        setSearchCatQuery(query);
+
+        // Filter events based on the search query
+        const filteredEvents = eventData.filter((event) =>
+            event.category.toLowerCase().includes(query.toLowerCase())
+        );
+
+        setFilteredData(filteredEvents);
+    };
+
 
     return (
         <main
@@ -75,27 +106,54 @@ export default function Event() {
 
                     </div>
                 ) : (
-                    <div className="flex flex-col">
-                        <label htmlFor="countries" className="block mb-1 text-base font-semibold text-white">By happening date</label>
-                        <select
-                            id="sort"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg outline-0 block w-52 p-2.5 dark:bg-ticketBg-200 dark:border-ticketBg-300 dark:placeholder-gray-400 dark:text-white"
-                            value={sortOption}
-                            onChange={handleSortChange}
-                        >
-                            <option value=""></option>
-                            <option value="soonest">Soonest</option>
-                            <option value="latest">Latest</option>
-                        </select>
+                    <div className="flex flex-wrap">
+                        <div className="flex flex-col mr-2">
+                            <label htmlFor="search" className="block mb-1 text-base font-semibold text-white">
+                                Search
+                            </label>
+                            <input
+                                type="text"
+                                id="search"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg outline-0 block w-52 p-2.5 dark:bg-ticketBg-200 dark:border-ticketBg-300 dark:placeholder-gray-400 dark:text-white"
+                                value={searchQuery}
+                                onChange={handleSearchInput}
+                            />
+                        </div>
+                        <div className="flex flex-col mr-2">
+                            <label htmlFor="sort" className="block mb-1 text-base font-semibold text-white">By happening date</label>
+                            <select
+                                id="sort"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg outline-0 block w-52 p-2.5 dark:bg-ticketBg-200 dark:border-ticketBg-300 dark:placeholder-gray-400 dark:text-white"
+                                value={sortOption}
+                                onChange={handleSortChange}
+                            >
+                                <option value=""></option>
+                                <option value="soonest">Soonest</option>
+                                <option value="latest">Latest</option>
+                            </select>
+                        </div>
+                        <div className="flex flex-col mr-2">
+                            <label htmlFor="searchCat" className="block mb-1 text-base font-semibold text-white">
+                                Search by Category
+                            </label>
+                            <input
+                                type="text"
+                                id="searchCat"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg outline-0 block w-52 p-2.5 dark:bg-ticketBg-200 dark:border-ticketBg-300 dark:placeholder-gray-400 dark:text-white"
+                                value={searchCatQuery}
+                                onChange={handleCatSearchInput}
+                            />
+                        </div>
                     </div>
+
                 )}
                 <div className="flex flex-wrap justify-center">
                     {loading ? (
                         <p className="text-3xl">Loading...</p>
-                    ) : eventData.length === 0 ? (
+                    ) : filteredData.length === 0 ? (
                         <p>No data available</p>
                     ) : (
-                        eventData.map((events) => {
+                        filteredData.map((events) => {
                             const eventDate = new Date(events.date);
                             const dayOfWeekAbbreviated = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(eventDate);
 

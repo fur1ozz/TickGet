@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import Link from "next/link";
 import {ThemeSwitcher} from "@/app/components/ThemeSwitcher";
-import { usePathname } from 'next/navigation'
+import {usePathname, useRouter} from 'next/navigation'
 import axios from "axios";
 
 const Header = () => {
@@ -13,7 +13,18 @@ const Header = () => {
     const [userId, setUserId] = useState("");
 
     const userToken = localStorage.getItem("token") || "";
+    // localStorage.clear();
 
+    const router = useRouter();
+    const logout = () => {
+        localStorage.clear();
+        if(pathname !== "/events"){
+            router.push("/events")
+        }else{
+            window.location.reload();
+        }
+
+    }
     const fetchDataWithToken = async () => {
         try {
             const response = await axios.post('http://localhost/api/auth', {
@@ -23,8 +34,10 @@ const Header = () => {
             setUsername(response.data.user.username);
             if (response.data.user.access === "admin") {
                 setAdmin(true);
+                localStorage.setItem("admin", "admin");
             }
             localStorage.setItem("userId", response.data.user.id);
+            setUserId(response.data.user.id);
             console.log("test header");
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -53,12 +66,22 @@ const Header = () => {
                         <div className="flex items-center lg:order-2">
                             <ThemeSwitcher />
                             {username ? (
-                                <Link
+                                <>
+                                    <Link
                                     href="/profile"
                                     className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
                                 >
-                                    <span className="font-medium text-gray-600 dark:text-gray-300">{username}</span>
+                                    <span className="font-medium text-gray-600 dark:text-gray-300">
+                                        {username.substring(0, 2)}
+                                    </span>
                                 </Link>
+                                    <button className="text-secondary-100 hover:text-secondary-200 ml-4" onClick={logout}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+                                        </svg>
+                                    </button>
+                                </>
+
                             ) : (
                                 <Link
                                     href="/login"
@@ -93,14 +116,16 @@ const Header = () => {
                                         Tickets
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        href="/profile/history"
-                                        className={`block py-2 pr-4 pl-3 lg:bg-transparent lg:p-0 border-b border-gray-100 dark:border-gray-700 lg:border-0 ${pathname === '/profile/history' ? 'bg-primary-700 lg:text-primary-700 text-white rounded' : 'text-secondary-300'}`}
-                                    >
-                                        Purchase History
-                                    </Link>
-                                </li>
+                                {userId && (
+                                    <li>
+                                        <Link
+                                            href="/profile/history"
+                                            className={`block py-2 pr-4 pl-3 lg:bg-transparent lg:p-0 border-b border-gray-100 dark:border-gray-700 lg:border-0 ${pathname === '/profile/history' ? 'bg-primary-700 lg:text-primary-700 text-white rounded' : 'text-secondary-300'}`}
+                                        >
+                                            Purchase History
+                                        </Link>
+                                    </li>
+                                )}
                                 {admin && (
                                     <li>
                                         <Link

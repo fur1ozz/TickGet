@@ -4,6 +4,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import Link from "next/link";
 import {handleInputChange} from "@/app/components/TwoWayBinding";
+import {ToastGreen, ToastYellow} from "@/app/components/Toasts";
 // import {useRouter} from "next/router";
 
 export default function Home() {
@@ -15,17 +16,29 @@ export default function Home() {
     });
 
     const handleChange = handleInputChange(formData, setFormData);
+    const [errorToast, setErrorToast] = useState<string | null>(null);
+    const [successToast, setSuccessToast] = useState<string | null>(null);
 
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
         console.log(formData);
+        if (!formData.email) {
+            console.log({ message: 'Write email' });
+            setErrorToast('Write email');
+            setTimeout(() => setErrorToast(null), 4000);
+            return;
+        }
         if (!formData.password || !formData.confirm_password) {
             console.log({ message: 'Write your password' });
+            setErrorToast('Write your password');
+            setTimeout(() => setErrorToast(null), 4000);
             return;
         }
         if (formData.password !== formData.confirm_password) {
             console.log({ message: 'Passwords do not match' });
+            setErrorToast('Passwords do not match');
+            setTimeout(() => setErrorToast(null), 4000);
             return;
         }
 
@@ -45,9 +58,17 @@ export default function Home() {
                     password: '',
                     confirm_password: '',
                 });
+                setSuccessToast(data.message);
+                setTimeout(() => setSuccessToast(null), 4000);
+            }
+            else{
+                setErrorToast(data.message);
+                setTimeout(() => setErrorToast(null), 4000);
             }
         } catch (error) {
             console.error(error);
+            setErrorToast("An error occurred while processing your request.");
+            setTimeout(() => setErrorToast(null), 4000);
         }
     };
 
@@ -57,6 +78,8 @@ export default function Home() {
             style={{ backgroundImage: 'url("/images/landscape5.jpg")' }}
         >
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
+                {errorToast && <ToastYellow text={errorToast} />}
+                {successToast && <ToastGreen text={successToast} />}
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-ticketBg-300 dark:border-gray-700">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">

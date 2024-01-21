@@ -1,7 +1,9 @@
 "use client"
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {handleInputChange, handleInputChangeNumber} from "@/app/components/TwoWayBinding";
 import axios from "axios";
+import {ToastGreen, ToastYellow} from "@/app/components/Toasts";
+import { useRouter } from "next/navigation";
 
 export default function NewEvent(){
     const [premiumCheck, setPremiumCheck] = useState(false);
@@ -21,10 +23,24 @@ export default function NewEvent(){
         v_price: "0",
         v_quantity: "0",
     });
+    const adminCheck = localStorage.getItem("admin") || "";
 
     const handleEventInputChange = handleInputChange(eventData, setEventData);
     const handleTicketInputChange = handleInputChangeNumber(ticketData, setTicketData);
 
+    const [errorToast, setErrorToast] = useState<string | null>(null);
+    const [successToast, setSuccessToast] = useState<string | null>(null);
+
+
+    const router = useRouter();
+
+    useEffect(() => {
+        // Check if the user is an admin
+        if (!adminCheck || adminCheck !== "admin") {
+            // Redirect the user to another page or show an error message
+            router.push('/tickets'); // Redirect to the home page, for example
+        }
+    }, [adminCheck]);
     const handleNewEventSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try {
@@ -62,9 +78,16 @@ export default function NewEvent(){
                 });
                 setPremiumCheck(false);
                 setVipCheck(false);
+                setSuccessToast(response.data.message);
+                setTimeout(() => setSuccessToast(null), 4000);
+            }else{
+                setErrorToast(response.data.error);
+                setTimeout(() => setErrorToast(null), 4000);
             }
         } catch (error) {
             console.error('Error submitting form:', error);
+            setErrorToast("An error occurred while processing your request.");
+            setTimeout(() => setErrorToast(null), 4000);
         }
 
         // console.log(eventData);
@@ -84,11 +107,13 @@ export default function NewEvent(){
             v_quantity: "1",
         }));
     };
-    return(
+    return adminCheck && (
         <section className="bg-gray-50 dark:bg-darkPrimary bg-cover bg-center bg-fixed"
                  style={{ backgroundImage: 'url("/images/street4.jpg")' }}
         >
             <div className="flex flex-col items-center justify-center px-4 md:px-6 lg:px-8 py-10 mx-auto min-h-screen bg-darken">
+                {errorToast && <ToastYellow text={errorToast} />}
+                {successToast && <ToastGreen text={successToast} />}
                 <div className="relative p-4 bg-white rounded-lg shadow dark:bg-ticketBg-200 sm:p-5">
                     <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
